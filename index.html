@@ -5,136 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비밀의 주인 찾기 - 8개 조 추리 게임</title>
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
-        }
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-        .team-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        .card-container {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .hint-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: left;
-            transition: transform 0.3s ease;
-        }
-        .hint-card:hover { transform: translateY(-3px); }
-        .category {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        .content {
-            font-size: 1.1rem;
-            color: #333;
-            line-height: 1.4;
-        }
-        .btn-next {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
-        }
-        .btn-next:active { transform: scale(0.95); }
-        .progress { margin-top: 15px; color: #666; font-size: 0.9rem; }
+        :root { --primary-color: #4a90e2; --bg-color: #f0f2f5; --card-bg: #ffffff; }
+        body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { width: 90%; max-width: 500px; text-align: center; padding: 20px; }
+        .team-title { font-size: 2.2rem; font-weight: 800; color: var(--primary-color); margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.05); }
+        .card-container { display: grid; gap: 15px; margin-bottom: 30px; }
+        .hint-card { background: var(--card-bg); padding: 18px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: left; border: 1px solid #eee; }
+        .category { font-size: 0.8rem; color: #4a90e2; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; }
+        .content { font-size: 1.15rem; color: #2c3e50; line-height: 1.5; font-weight: 500; word-break: keep-all; }
+        .btn-next { background: linear-gradient(135deg, #4a90e2, #357abd); color: white; border: none; padding: 18px 50px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3); transition: all 0.2s; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4); }
+        .btn-next:active { transform: scale(0.98); }
+        .progress { margin-top: 15px; color: #888; font-size: 1rem; font-weight: 600; }
+        .loading { font-size: 1.2rem; color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="team-name" class="team-title">제 1 조</div>
+<div class="container" id="main-ui" style="display:none;">
+    <div id="team-name" class="team-title">로딩 중...</div>
     
     <div class="card-container">
-        <div class="hint-card">
-            <div class="category">문항 1. 이 사람의 자주하는 생활은?</div>
-            <div id="hint1" class="content">-</div>
-        </div>
-        <div class="hint-card">
-            <div class="category">문항 2. 이 사람의 2026년 가장 큰 소비는?</div>
-            <div id="hint2" class="content">-</div>
-        </div>
-        <div class="hint-card">
-            <div class="category">문항 3. 이 사람이 좋아하는 OOO은?</div>
-            <div id="hint3" class="content">-</div>
-        </div>
-        <div class="hint-card">
-            <div class="category">문항 4. 이 사람이 제일 싫어하는 것은?</div>
-            <div id="hint4" class="content">-</div>
-        </div>
-        <div class="hint-card">
-            <div class="category">문항 5. 이 모임에서 아는 사람이 몇명인지?</div>
-            <div id="hint5" class="content">-</div>
-        </div>
+        <div class="hint-card"><div class="category">문항 1. 자주하는 생활</div><div id="hint1" class="content"></div></div>
+        <div class="hint-card"><div class="category">문항 2. 2026년 가장 큰 소비</div><div id="hint2" class="content"></div></div>
+        <div class="hint-card"><div class="category">문항 3. 좋아하는 OOO</div><div id="hint3" class="content"></div></div>
+        <div class="hint-card"><div class="category">문항 4. 제일 싫어하는 것</div><div id="hint4" class="content"></div></div>
+        <div class="hint-card"><div class="category">문항 5. 이 모임 아는 사람 수</div><div id="hint5" class="content"></div></div>
     </div>
 
-    <button class="btn-next" onclick="nextTeam()">다음 조 보기</button>
-    <div id="progress-text" class="progress">1 / 8</div>
+    <button class="btn-next" onclick="nextTeam()">다음 조 확인하기</button>
+    <div id="progress-text" class="progress"></div>
 </div>
 
-<script>
-    // 💡 구글 폼에서 받은 데이터를 아래 형식에 맞춰서 넣어주세요!
-    const teamsData = [
-        {
-            name: "제 1 조",
-            hints: ["아침마다 조깅 30분", "최신형 전기자전거 구매", "민트초코 아이스크림", "약속 시간에 늦는 사람", "총 12명"]
-        },
-        {
-            name: "제 2 조",
-            hints: ["자기 전 명상 10분", "해외 여행 항공권", "정갈한 한정식", "시끄러운 공사장 소음", "총 5명"]
-        },
-        // 나머지 조들도 같은 형식으로 추가하면 됩니다 (8조까지)
-    ];
+<div id="loader" class="loading">데이터를 불러오는 중입니다...</div>
 
+<script>
+    // 💡 구글 시트 '웹에 게시'에서 복사한 CSV URL을 여기에 넣으세요!
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTb3pHCzC3HNfUHWAzmCA43vK-5k1UKTJ4yMMbHGwxvAfCuiP5K-LR_ZcZUSlwYyQZy7SOmcbThXPYj/pub?output=csv";
+
+    let teamsData = [];
     let currentIndex = 0;
+
+    async function fetchSheetData() {
+        try {
+            const response = await fetch(sheetUrl);
+            const data = await response.text();
+            
+            // CSV 파싱: 줄바꿈으로 나누고 첫 번째 줄(헤더)은 제외
+            const rows = data.split(/\r?\n/).slice(1); 
+            
+            teamsData = rows.map(row => {
+                // 따옴표 안의 쉼표를 무시하고 분리하는 정규식
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                
+                // 알려주신 위치 반영 (0부터 시작하므로 A=0, B=1, C=2, D=3, E=4, F=5, G=6)
+                if (cols.length >= 7) {
+                    return {
+                        name: cols[1].replace(/"/g, '').trim(), // B열: 조 이름
+                        hints: [
+                            cols[2], // C열: 문항 1
+                            cols[3], // D열: 문항 2
+                            cols[4], // E열: 문항 3
+                            cols[5], // F열: 문항 4
+                            cols[6]  // G열: 문항 5
+                        ]
+                    };
+                }
+                return null;
+            }).filter(item => item !== null && item.name !== "");
+
+            if (teamsData.length > 0) {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-ui').style.display = 'block';
+                updateDisplay();
+            } else {
+                document.getElementById('loader').innerText = "입력된 조 데이터가 없습니다.";
+            }
+        } catch (error) {
+            console.error(error);
+            document.getElementById('loader').innerText = "데이터 로드 실패. URL을 확인해주세요.";
+        }
+    }
 
     function updateDisplay() {
         const team = teamsData[currentIndex];
-        document.getElementById('team-name').innerText = team.name;
-        document.getElementById('hint1').innerText = team.hints[0];
-        document.getElementById('hint2').innerText = team.hints[1];
-        document.getElementById('hint3').innerText = team.hints[2];
-        document.getElementById('hint4').innerText = team.hints[3];
-        document.getElementById('hint5').innerText = team.hints[4];
+        document.getElementById('team-name').innerText = team.name + " 추리하기";
+        
+        // 텍스트 앞뒤 따옴표 제거 및 출력
+        for (let i = 0; i < 5; i++) {
+            const content = team.hints[i] ? team.hints[i].replace(/"/g, '').trim() : "내용 없음";
+            document.getElementById(`hint${i+1}`).innerText = content;
+        }
+        
         document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${teamsData.length}`;
     }
 
     function nextTeam() {
+        if (teamsData.length === 0) return;
         currentIndex = (currentIndex + 1) % teamsData.length;
         updateDisplay();
     }
 
-    // 초기 화면 설정
-    updateDisplay();
+    fetchSheetData();
 </script>
 
 </body>
